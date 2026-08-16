@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Run Time Calculator</title>
+
+    <style>
+        /* ==========================================================
+           ОСНОВА
+           ========================================================== */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 30px;
+
+            font-family: Arial, sans-serif;
+
+            background: #111;
+            color: #eee;
+        }
+
+
+        /* ==========================================================
+           КАЛЬКУЛЯТОР
+           ========================================================== */
+
+        .calculator {
+            width: 100%;
+            max-width: 900px;
+
+            padding: 30px;
+
+            background: #181818;
+            border: 1px solid #292929;
+            border-radius: 16px;
+
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+        }
+
+
+        /* ==========================================================
+           ЗАГОЛОВОК
+           ========================================================== */
+
+        .header {
+            margin-bottom: 28px;
+        }
+
+        .header h1 {
+            margin: 0 0 7px;
+
+            font-size: 25px;
+            font-weight: 600;
+
+            color: #fff;
+        }
+
+        .header p {
+            margin: 0;
+
+            font-size: 14px;
+            color: #777;
+        }
+
+
+        /* ==========================================================
+           ДВЕ КОЛОНКИ
+           ========================================================== */
+
+        .columns {
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 16px;
+        }
+
+
+        /* ==========================================================
+           КОЛОНКА
+           ========================================================== */
+
+        .column {
+            padding: 20px;
+
+            background: #1e1e1e;
+
+            border: 1px solid #292929;
+            border-radius: 12px;
+        }
+
+        .column-title {
+            margin-bottom: 18px;
+
+            font-size: 14px;
+            font-weight: 600;
+
+            color: #aaa;
+        }
+
+
+        /* ==========================================================
+           ПОЛЯ ВВОДА
+           ========================================================== */
+
+        .field {
+            margin-bottom: 12px;
+        }
+
+        .field:last-child {
+            margin-bottom: 0;
+        }
+
+        .field label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            font-size: 12px;
+            color: #777;
+        }
+
+        .field input {
+            width: 100%;
+
+            padding: 11px 12px;
+
+            border: 1px solid #333;
+            border-radius: 7px;
+
+            outline: none;
+
+            background: #111;
+            color: #fff;
+
+            font-family: monospace;
+            font-size: 15px;
+
+            transition:
+                border-color 0.15s ease,
+                background 0.15s ease;
+        }
+
+        .field input:focus {
+            border-color: #555;
+            background: #141414;
+        }
+
+
+        /* ==========================================================
+           РЕЗУЛЬТАТЫ
+           ========================================================== */
+
+        .result {
+            padding: 14px;
+
+            margin-bottom: 12px;
+
+            background: #151515;
+
+            border: 1px solid #292929;
+            border-radius: 8px;
+        }
+
+        .result:last-child {
+            margin-bottom: 0;
+        }
+
+        .result-label {
+            margin-bottom: 7px;
+
+            font-size: 12px;
+            color: #777;
+        }
+
+        .result-value {
+            font-family: monospace;
+
+            font-size: 21px;
+            font-weight: 600;
+
+            color: #ddd;
+        }
+
+
+        /* ==========================================================
+           ГЛАВНЫЙ РЕЗУЛЬТАТ
+           ========================================================== */
+
+        .result.main {
+            padding: 17px;
+
+            background: #222;
+            border-color: #3a3a3a;
+        }
+
+        .result.main .result-label {
+            color: #999;
+        }
+
+        .result.main .result-value {
+            font-size: 29px;
+            color: #fff;
+        }
+
+
+        /* ==========================================================
+           ОШИБКА
+           ========================================================== */
+
+        .error {
+            min-height: 18px;
+
+            margin-top: 16px;
+
+            font-size: 13px;
+            color: #999;
+
+            text-align: center;
+        }
+
+
+        /* ==========================================================
+           КНОПКА
+           ========================================================== */
+
+        .actions {
+            margin-top: 18px;
+        }
+
+        button {
+            width: 100%;
+
+            padding: 11px 16px;
+
+            border: 1px solid #303030;
+            border-radius: 8px;
+
+            background: #222;
+            color: #bbb;
+
+            font-size: 13px;
+
+            cursor: pointer;
+
+            transition:
+                background 0.15s ease,
+                border-color 0.15s ease;
+        }
+
+        button:hover {
+            background: #292929;
+            border-color: #3b3b3b;
+        }
+
+        button:active {
+            background: #1d1d1d;
+        }
+
+
+        /* ==========================================================
+           ПОДСКАЗКА
+           ========================================================== */
+
+        .hint {
+            margin-top: 18px;
+
+            font-size: 11px;
+
+            color: #555;
+
+            text-align: center;
+        }
+
+
+        /* ==========================================================
+           АДАПТИВНОСТЬ
+           ========================================================== */
+
+        @media (max-width: 700px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .calculator {
+                padding: 20px;
+            }
+
+            .columns {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="calculator">
+
+        <!-- ======================================================
+             ЗАГОЛОВОК
+             ====================================================== -->
+
+        <div class="header">
+
+            <h1>Run Time Calculator</h1>
+
+            <p>
+                Расчёт времени забега по временным меткам видео
+            </p>
+
+        </div>
+
+
+        <!-- ======================================================
+             КОЛОНКИ
+             ====================================================== -->
+
+        <div class="columns">
+
+
+            <!-- ==================================================
+                 ЛЕВАЯ КОЛОНКА
+                 ================================================== -->
+
+            <section class="column">
+
+                <div class="column-title">
+                    Исходные данные
+                </div>
+
+
+                <div class="field">
+
+                    <label for="videoStart">
+                        Начало видео
+                    </label>
+
+                    <input
+                        id="videoStart"
+                        type="text"
+                        value="0:00:00.000"
+                        placeholder="0:00:00.000"
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label for="runStart">
+                        Начало забега
+                    </label>
+
+                    <input
+                        id="runStart"
+                        type="text"
+                        value="0:00:21.937"
+                        placeholder="0:00:00.000"
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label for="runEnd">
+                        Конец забега
+                    </label>
+
+                    <input
+                        id="runEnd"
+                        type="text"
+                        value="0:05:03.033"
+                        placeholder="0:00:00.000"
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label for="videoEnd">
+                        Конец видео
+                    </label>
+
+                    <input
+                        id="videoEnd"
+                        type="text"
+                        value="0:10:25.834"
+                        placeholder="0:00:00.000"
+                        autocomplete="off"
+                    >
+
+                </div>
+
+            </section>
+
+
+            <!-- ==================================================
+                 ПРАВАЯ КОЛОНКА
+                 ================================================== -->
+
+            <section class="column">
+
+                <div class="column-title">
+                    Результат
+                </div>
+
+
+                <div class="result">
+
+                    <div class="result-label">
+                        До начала забега
+                    </div>
+
+                    <div
+                        class="result-value"
+                        id="beforeRun"
+                    >
+                        0:00:21.937
+                    </div>
+
+                </div>
+
+
+                <div class="result main">
+
+                    <div class="result-label">
+                        Время забега
+                    </div>
+
+                    <div
+                        class="result-value"
+                        id="runTime"
+                    >
+                        0:04:41.096
+                    </div>
+
+                </div>
+
+
+                <div class="result">
+
+                    <div class="result-label">
+                        После забега
+                    </div>
+
+                    <div
+                        class="result-value"
+                        id="afterRun"
+                    >
+                        0:05:22.801
+                    </div>
+
+                </div>
+
+
+                <div class="result">
+
+                    <div class="result-label">
+                        Полная продолжительность видео
+                    </div>
+
+                    <div
+                        class="result-value"
+                        id="videoTime"
+                    >
+                        0:10:25.834
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <!-- ======================================================
+             ОШИБКА
+             ====================================================== -->
+
+        <div
+            class="error"
+            id="error"
+        ></div>
+
+
+        <!-- ======================================================
+             КНОПКА
+             ====================================================== -->
+
+        <div class="actions">
+
+            <button id="resetButton">
+                Сбросить значения
+            </button>
+
+        </div>
+
+
+        <div class="hint">
+            Формат времени: ч:мм:сс.мс
+        </div>
+
+    </main>
+
+
+    <script>
+
+        /* ==========================================================
+           ЭЛЕМЕНТЫ
+           ========================================================== */
+
+        const videoStartInput =
+            document.getElementById("videoStart");
+
+        const runStartInput =
+            document.getElementById("runStart");
+
+        const runEndInput =
+            document.getElementById("runEnd");
+
+        const videoEndInput =
+            document.getElementById("videoEnd");
+
+
+        const beforeRunOutput =
+            document.getElementById("beforeRun");
+
+        const runTimeOutput =
+            document.getElementById("runTime");
+
+        const afterRunOutput =
+            document.getElementById("afterRun");
+
+        const videoTimeOutput =
+            document.getElementById("videoTime");
+
+
+        const errorOutput =
+            document.getElementById("error");
+
+        const resetButton =
+            document.getElementById("resetButton");
+
+
+        /* ==========================================================
+           ВРЕМЯ → МИЛЛИСЕКУНДЫ
+           ========================================================== */
+
+        function parseTime(value) {
+
+            value = value.trim();
+
+            const match = value.match(
+                /^(\d+):([0-5]\d):([0-5]\d)\.(\d{1,3})$/
+            );
+
+            if (!match) {
+                return null;
+            }
+
+
+            const hours =
+                Number(match[1]);
+
+            const minutes =
+                Number(match[2]);
+
+            const seconds =
+                Number(match[3]);
+
+
+            let milliseconds =
+                Number(match[4]);
+
+
+            if (match[4].length === 1) {
+                milliseconds *= 100;
+            }
+
+            if (match[4].length === 2) {
+                milliseconds *= 10;
+            }
+
+
+            return (
+                hours * 3600000 +
+                minutes * 60000 +
+                seconds * 1000 +
+                milliseconds
+            );
+        }
+
+
+        /* ==========================================================
+           МИЛЛИСЕКУНДЫ → ВРЕМЯ
+           ========================================================== */
+
+        function formatTime(milliseconds) {
+
+            milliseconds =
+                Math.round(milliseconds);
+
+
+            const hours =
+                Math.floor(milliseconds / 3600000);
+
+            milliseconds %= 3600000;
+
+
+            const minutes =
+                Math.floor(milliseconds / 60000);
+
+            milliseconds %= 60000;
+
+
+            const seconds =
+                Math.floor(milliseconds / 1000);
+
+            milliseconds %= 1000;
+
+
+            return (
+                hours +
+                ":" +
+                String(minutes).padStart(2, "0") +
+                ":" +
+                String(seconds).padStart(2, "0") +
+                "." +
+                String(milliseconds).padStart(3, "0")
+            );
+        }
+
+
+        /* ==========================================================
+           РАСЧЁТ
+           ========================================================== */
+
+        function calculate() {
+
+            errorOutput.textContent = "";
+
+
+            const videoStart =
+                parseTime(videoStartInput.value);
+
+            const runStart =
+                parseTime(runStartInput.value);
+
+            const runEnd =
+                parseTime(runEndInput.value);
+
+            const videoEnd =
+                parseTime(videoEndInput.value);
+
+
+            if (
+                videoStart === null ||
+                runStart === null ||
+                runEnd === null ||
+                videoEnd === null
+            ) {
+
+                errorOutput.textContent =
+                    "Проверь формат времени.";
+
+                return;
+            }
+
+
+            if (runStart < videoStart) {
+
+                errorOutput.textContent =
+                    "Начало забега раньше начала видео.";
+
+                return;
+            }
+
+
+            if (runEnd < runStart) {
+
+                errorOutput.textContent =
+                    "Конец забега раньше его начала.";
+
+                return;
+            }
+
+
+            if (videoEnd < runEnd) {
+
+                errorOutput.textContent =
+                    "Конец видео раньше конца забега.";
+
+                return;
+            }
+
+
+            /* ------------------------------------------------------
+               РАСЧЁТЫ
+               ------------------------------------------------------ */
+
+            const beforeRun =
+                runStart - videoStart;
+
+            const runTime =
+                runEnd - runStart;
+
+            const afterRun =
+                videoEnd - runEnd;
+
+            const videoTime =
+                videoEnd - videoStart;
+
+
+            /* ------------------------------------------------------
+               РЕЗУЛЬТАТЫ
+               ------------------------------------------------------ */
+
+            beforeRunOutput.textContent =
+                formatTime(beforeRun);
+
+            runTimeOutput.textContent =
+                formatTime(runTime);
+
+            afterRunOutput.textContent =
+                formatTime(afterRun);
+
+            videoTimeOutput.textContent =
+                formatTime(videoTime);
+        }
+
+
+        /* ==========================================================
+           АВТОМАТИЧЕСКИЙ РАСЧЁТ
+           ========================================================== */
+
+        const inputs = [
+            videoStartInput,
+            runStartInput,
+            runEndInput,
+            videoEndInput
+        ];
+
+
+        inputs.forEach(input => {
+
+            input.addEventListener(
+                "input",
+                calculate
+            );
+
+            input.addEventListener(
+                "change",
+                calculate
+            );
+
+        });
+
+
+        /* ==========================================================
+           СБРОС
+           ========================================================== */
+
+        resetButton.addEventListener(
+            "click",
+            () => {
+
+                videoStartInput.value =
+                    "0:00:00.000";
+
+                runStartInput.value =
+                    "0:00:00.000";
+
+                runEndInput.value =
+                    "0:00:00.000";
+
+                videoEndInput.value =
+                    "0:00:00.000";
+
+
+                calculate();
+            }
+        );
+
+
+        /* ==========================================================
+           ЗАПУСК
+           ========================================================== */
+
+        calculate();
+
+    </script>
+
+</body>
+</html>
