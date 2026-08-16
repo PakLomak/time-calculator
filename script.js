@@ -298,6 +298,10 @@ function updateModNote(
     videoTime
 ) {
 
+    startTime = startTime.replace(/^0:/, "");
+    endTime = endTime.replace(/^0:/, "");
+    videoTime = videoTime.replace(/^0:/, "");
+
     modNoteOutput.value =
         `Mod Note: Start Time: ${startTime}, End Time: ${endTime}, Frame Rate: ${videoFps}, Time: ${videoTime}`;
 }
