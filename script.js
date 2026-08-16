@@ -1,48 +1,23 @@
-```javascript
 /* ==========================================================
    ЭЛЕМЕНТЫ
    ========================================================== */
 
-const videoStartInput =
-    document.getElementById("videoStart");
+const videoStartInput = document.getElementById("videoStart");
+const runStartInput = document.getElementById("runStart");
+const runEndInput = document.getElementById("runEnd");
+const videoEndInput = document.getElementById("videoEnd");
+const videoFpsInput = document.getElementById("videoFps");
 
-const runStartInput =
-    document.getElementById("runStart");
+const beforeRunOutput = document.getElementById("beforeRun");
+const runTimeOutput = document.getElementById("runTime");
+const afterRunOutput = document.getElementById("afterRun");
+const videoTimeOutput = document.getElementById("videoTime");
 
-const runEndInput =
-    document.getElementById("runEnd");
+const modNoteOutput = document.getElementById("modNote");
+const errorOutput = document.getElementById("error");
 
-const videoEndInput =
-    document.getElementById("videoEnd");
-
-const videoFpsInput =
-    document.getElementById("videoFps");
-
-
-const beforeRunOutput =
-    document.getElementById("beforeRun");
-
-const runTimeOutput =
-    document.getElementById("runTime");
-
-const afterRunOutput =
-    document.getElementById("afterRun");
-
-const videoTimeOutput =
-    document.getElementById("videoTime");
-
-
-const modNoteOutput =
-    document.getElementById("modNote");
-
-const errorOutput =
-    document.getElementById("error");
-
-const resetButton =
-    document.getElementById("resetButton");
-
-const copyButton =
-    document.getElementById("copyButton");
+const resetButton = document.getElementById("resetButton");
+const copyButton = document.getElementById("copyButton");
 
 
 /* ==========================================================
@@ -59,22 +34,28 @@ function parseTime(value) {
 
 
     /* ------------------------------------------------------
-       Формат с буквами
+       ФОРМАТ С ЕДИНИЦАМИ
 
        7m
        7m 3s
        7m 3s 250ms
        1h 7m 3s 250ms
+
+       Также поддерживаются:
+
+       7мин
+       3сек
+       250мс
+       1ч 7мин 3сек 250мс
        ------------------------------------------------------ */
 
     if (/[a-zа-я]/i.test(value)) {
 
-        const normalized =
-            value
-                .toLowerCase()
-                .replace(/,/g, ".")
-                .replace(/\s+/g, " ")
-                .trim();
+        const normalized = value
+            .toLowerCase()
+            .replace(/,/g, ".")
+            .replace(/\s+/g, " ")
+            .trim();
 
 
         const hourMatch =
@@ -90,25 +71,21 @@ function parseTime(value) {
             normalized.match(/(\d+(?:\.\d+)?)\s*(?:ms|мс)/);
 
 
-        const hours =
-            hourMatch
-                ? Number(hourMatch[1])
-                : 0;
+        const hours = hourMatch
+            ? Number(hourMatch[1])
+            : 0;
 
-        const minutes =
-            minuteMatch
-                ? Number(minuteMatch[1])
-                : 0;
+        const minutes = minuteMatch
+            ? Number(minuteMatch[1])
+            : 0;
 
-        const seconds =
-            secondMatch
-                ? Number(secondMatch[1])
-                : 0;
+        const seconds = secondMatch
+            ? Number(secondMatch[1])
+            : 0;
 
-        const milliseconds =
-            millisecondMatch
-                ? Number(millisecondMatch[1])
-                : 0;
+        const milliseconds = millisecondMatch
+            ? Number(millisecondMatch[1])
+            : 0;
 
 
         if (
@@ -150,38 +127,42 @@ function parseTime(value) {
 
 
     /* ------------------------------------------------------
-       Если введено просто число
+       ПРОСТОЕ ЧИСЛО
 
-       7     → 7 секунд
-       7.5   → 7.5 секунд
+       7       → 7 секунд
+       7.5     → 7.5 секунд
+       21.937  → 21.937 секунд
        ------------------------------------------------------ */
 
     if (/^\d+(?:\.\d+)?$/.test(value)) {
 
-        const seconds =
-            Number(value);
+        const seconds = Number(value);
 
         if (!Number.isFinite(seconds)) {
             return null;
         }
 
-        return Math.round(
-            seconds * 1000
-        );
+        return Math.round(seconds * 1000);
     }
 
 
     /* ------------------------------------------------------
-       Формат с двоеточиями
+       ФОРМАТ С ДВОЕТОЧИЯМИ
 
        7:30
+       7:3
        7:3.25
+
+       → минуты : секунды
+
+
        1:7:30
        1:7:3.25
+
+       → часы : минуты : секунды
        ------------------------------------------------------ */
 
-    const parts =
-        value.split(":");
+    const parts = value.split(":");
 
 
     if (
@@ -199,22 +180,14 @@ function parseTime(value) {
 
     if (parts.length === 2) {
 
-        minutes =
-            Number(parts[0]);
-
-        seconds =
-            Number(parts[1]);
+        minutes = Number(parts[0]);
+        seconds = Number(parts[1]);
 
     } else {
 
-        hours =
-            Number(parts[0]);
-
-        minutes =
-            Number(parts[1]);
-
-        seconds =
-            Number(parts[2]);
+        hours = Number(parts[0]);
+        minutes = Number(parts[1]);
+        seconds = Number(parts[2]);
     }
 
 
@@ -258,35 +231,25 @@ function parseTime(value) {
 
 function formatTime(milliseconds) {
 
-    milliseconds =
-        Math.round(milliseconds);
+    milliseconds = Math.round(milliseconds);
 
 
     const hours =
-        Math.floor(
-            milliseconds / 3600000
-        );
+        Math.floor(milliseconds / 3600000);
 
-    milliseconds %=
-        3600000;
+    milliseconds %= 3600000;
 
 
     const minutes =
-        Math.floor(
-            milliseconds / 60000
-        );
+        Math.floor(milliseconds / 60000);
 
-    milliseconds %=
-        60000;
+    milliseconds %= 60000;
 
 
     const seconds =
-        Math.floor(
-            milliseconds / 1000
-        );
+        Math.floor(milliseconds / 1000);
 
-    milliseconds %=
-        1000;
+    milliseconds %= 1000;
 
 
     return (
@@ -350,24 +313,16 @@ function calculate() {
 
 
     const videoStart =
-        parseTime(
-            videoStartInput.value
-        );
+        parseTime(videoStartInput.value);
 
     const runStart =
-        parseTime(
-            runStartInput.value
-        );
+        parseTime(runStartInput.value);
 
     const runEnd =
-        parseTime(
-            runEndInput.value
-        );
+        parseTime(runEndInput.value);
 
     const videoEnd =
-        parseTime(
-            videoEndInput.value
-        );
+        parseTime(videoEndInput.value);
 
 
     const videoFps =
@@ -375,7 +330,9 @@ function calculate() {
 
 
     /* ------------------------------------------------------
-       ПРОВЕРКА ФОРМАТА
+       ЕСЛИ ПОЛЕ ЕЩЁ РЕДАКТИРУЕТСЯ
+
+       Ничего не ломаем и не показываем ошибку.
        ------------------------------------------------------ */
 
     if (
@@ -384,10 +341,6 @@ function calculate() {
         runEnd === null ||
         videoEnd === null
     ) {
-
-        errorOutput.textContent =
-            "Проверь формат времени.";
-
         return;
     }
 
@@ -517,29 +470,30 @@ const timeInputs = [
 
 timeInputs.forEach(input => {
 
+    /* Пересчитываем во время ввода */
     input.addEventListener(
         "input",
         calculate
     );
 
 
+    /* Приводим к стандартному виду */
     input.addEventListener(
         "change",
         () => {
 
             normalizeTimeInput(input);
-
             calculate();
         }
     );
 
 
+    /* Приводим к стандартному виду после выхода */
     input.addEventListener(
         "blur",
         () => {
 
             normalizeTimeInput(input);
-
             calculate();
         }
     );
@@ -647,4 +601,3 @@ resetButton.addEventListener(
    ========================================================== */
 
 calculate();
-```
