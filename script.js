@@ -476,12 +476,12 @@ function calculate() {
        MOD NOTE
        ------------------------------------------------------ */
 
-    updateModNote(
-        formatTime(runStart),
-        formatTime(runEnd),
-        videoFps,
-        formattedRunTime
-    );
+      updateModNote(
+       formatModNoteTime(runStart),
+       formatModNoteTime(runEnd),
+       videoFps,
+       formatModNoteTime(runTime)
+   );
 }
 
 
