@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -466,30 +467,19 @@
 
     <main class="calculator">
 
-        <!-- ======================================================
-             ЗАГОЛОВОК
-             ====================================================== -->
-
         <div class="header">
-
             <h1>Run Time Calculator</h1>
 
             <p>
                 Расчёт времени забега по временным меткам видео
             </p>
-
         </div>
 
 
-        <!-- ======================================================
-             ТРИ КОЛОНКИ
-             ====================================================== -->
-
         <div class="columns">
 
-
             <!-- ==================================================
-                 КОЛОНКА 1 — ИСХОДНЫЕ ДАННЫЕ
+                 ИСХОДНЫЕ ДАННЫЕ
                  ================================================== -->
 
             <section class="column">
@@ -509,7 +499,7 @@
                         id="videoStart"
                         type="text"
                         value="0:00:00.000"
-                        placeholder="0:00:00.000"
+                        placeholder="Например: 7.5"
                         autocomplete="off"
                     >
 
@@ -526,7 +516,7 @@
                         id="runStart"
                         type="text"
                         value="0:00:21.937"
-                        placeholder="0:00:00.000"
+                        placeholder="Например: 0:7:3.25"
                         autocomplete="off"
                     >
 
@@ -543,7 +533,7 @@
                         id="runEnd"
                         type="text"
                         value="0:05:03.033"
-                        placeholder="0:00:00.000"
+                        placeholder="Например: 5:3.033"
                         autocomplete="off"
                     >
 
@@ -560,7 +550,7 @@
                         id="videoEnd"
                         type="text"
                         value="0:10:25.834"
-                        placeholder="0:00:00.000"
+                        placeholder="Например: 10:25.834"
                         autocomplete="off"
                     >
 
@@ -570,7 +560,7 @@
 
 
             <!-- ==================================================
-                 КОЛОНКА 2 — РЕЗУЛЬТАТ
+                 РЕЗУЛЬТАТ
                  ================================================== -->
 
             <section class="column">
@@ -647,7 +637,7 @@
 
 
             <!-- ==================================================
-                 КОЛОНКА 3 — MOD NOTE
+                 MOD NOTE
                  ================================================== -->
 
             <section class="column">
@@ -667,7 +657,7 @@
                         id="videoFps"
                         type="number"
                         value="60"
-                        min="1"
+                        min="0.001"
                         step="0.001"
                         placeholder="60"
                     >
@@ -700,10 +690,6 @@
         </div>
 
 
-        <!-- ======================================================
-             НИЖНЯЯ ЧАСТЬ
-             ====================================================== -->
-
         <div class="bottom">
 
             <div
@@ -721,7 +707,7 @@
 
 
             <div class="hint">
-                Формат времени: ч:мм:сс.мс
+                Можно вводить: 7 · 7.5 · 0:7 · 0:7:3.25 · 7m 3s 250ms
             </div>
 
         </div>
@@ -729,424 +715,8 @@
     </main>
 
 
-    <script>
-
-        /* ==========================================================
-           ЭЛЕМЕНТЫ
-           ========================================================== */
-
-        const videoStartInput =
-            document.getElementById("videoStart");
-
-        const runStartInput =
-            document.getElementById("runStart");
-
-        const runEndInput =
-            document.getElementById("runEnd");
-
-        const videoEndInput =
-            document.getElementById("videoEnd");
-
-        const videoFpsInput =
-            document.getElementById("videoFps");
-
-
-        const beforeRunOutput =
-            document.getElementById("beforeRun");
-
-        const runTimeOutput =
-            document.getElementById("runTime");
-
-        const afterRunOutput =
-            document.getElementById("afterRun");
-
-        const videoTimeOutput =
-            document.getElementById("videoTime");
-
-
-        const modNoteOutput =
-            document.getElementById("modNote");
-
-
-        const errorOutput =
-            document.getElementById("error");
-
-
-        const resetButton =
-            document.getElementById("resetButton");
-
-        const copyButton =
-            document.getElementById("copyButton");
-
-
-        /* ==========================================================
-           ВРЕМЯ → МИЛЛИСЕКУНДЫ
-           ========================================================== */
-
-        function parseTime(value) {
-
-            value = value.trim();
-
-            const match = value.match(
-                /^(\d+):([0-5]\d):([0-5]\d)\.(\d{1,3})$/
-            );
-
-            if (!match) {
-                return null;
-            }
-
-
-            const hours =
-                Number(match[1]);
-
-            const minutes =
-                Number(match[2]);
-
-            const seconds =
-                Number(match[3]);
-
-
-            let milliseconds =
-                Number(match[4]);
-
-
-            if (match[4].length === 1) {
-                milliseconds *= 100;
-            }
-
-            if (match[4].length === 2) {
-                milliseconds *= 10;
-            }
-
-
-            return (
-                hours * 3600000 +
-                minutes * 60000 +
-                seconds * 1000 +
-                milliseconds
-            );
-        }
-
-
-        /* ==========================================================
-           МИЛЛИСЕКУНДЫ → ВРЕМЯ
-           ========================================================== */
-
-        function formatTime(milliseconds) {
-
-            milliseconds =
-                Math.round(milliseconds);
-
-
-            const hours =
-                Math.floor(milliseconds / 3600000);
-
-            milliseconds %= 3600000;
-
-
-            const minutes =
-                Math.floor(milliseconds / 60000);
-
-            milliseconds %= 60000;
-
-
-            const seconds =
-                Math.floor(milliseconds / 1000);
-
-            milliseconds %= 1000;
-
-
-            return (
-                hours +
-                ":" +
-                String(minutes).padStart(2, "0") +
-                ":" +
-                String(seconds).padStart(2, "0") +
-                "." +
-                String(milliseconds).padStart(3, "0")
-            );
-        }
-
-
-        /* ==========================================================
-           ОБНОВЛЕНИЕ MOD NOTE
-           ========================================================== */
-
-        function updateModNote(
-            startTime,
-            endTime,
-            videoFps,
-            videoTime
-        ) {
-
-            modNoteOutput.value =
-                `Mod Note: Start Time: ${startTime}, End Time: ${endTime}, Frame Rate: ${videoFps}, Time: ${videoTime}`;
-        }
-
-
-        /* ==========================================================
-           РАСЧЁТ
-           ========================================================== */
-
-        function calculate() {
-
-            errorOutput.textContent = "";
-
-
-            const videoStart =
-                parseTime(videoStartInput.value);
-
-            const runStart =
-                parseTime(runStartInput.value);
-
-            const runEnd =
-                parseTime(runEndInput.value);
-
-            const videoEnd =
-                parseTime(videoEndInput.value);
-
-
-            const videoFps =
-                videoFpsInput.value.trim();
-
-
-            /* ------------------------------------------------------
-               ПРОВЕРКА ВРЕМЕНИ
-               ------------------------------------------------------ */
-
-            if (
-                videoStart === null ||
-                runStart === null ||
-                runEnd === null ||
-                videoEnd === null
-            ) {
-
-                errorOutput.textContent =
-                    "Проверь формат времени.";
-
-                return;
-            }
-
-
-            /* ------------------------------------------------------
-               ПРОВЕРКА ПОРЯДКА
-               ------------------------------------------------------ */
-
-            if (runStart < videoStart) {
-
-                errorOutput.textContent =
-                    "Начало забега раньше начала видео.";
-
-                return;
-            }
-
-
-            if (runEnd < runStart) {
-
-                errorOutput.textContent =
-                    "Конец забега раньше его начала.";
-
-                return;
-            }
-
-
-            if (videoEnd < runEnd) {
-
-                errorOutput.textContent =
-                    "Конец видео раньше конца забега.";
-
-                return;
-            }
-
-
-            /* ------------------------------------------------------
-               ПРОВЕРКА FPS
-               ------------------------------------------------------ */
-
-            if (
-                videoFps === "" ||
-                Number(videoFps) <= 0
-            ) {
-
-                errorOutput.textContent =
-                    "Укажи корректный Frame Rate.";
-
-                return;
-            }
-
-
-            /* ------------------------------------------------------
-               РАСЧЁТЫ
-               ------------------------------------------------------ */
-
-            const beforeRun =
-                runStart - videoStart;
-
-            const runTime =
-                runEnd - runStart;
-
-            const afterRun =
-                videoEnd - runEnd;
-
-            const videoTime =
-                videoEnd - videoStart;
-
-
-            /* ------------------------------------------------------
-               ФОРМАТИРОВАНИЕ
-               ------------------------------------------------------ */
-
-            const formattedBeforeRun =
-                formatTime(beforeRun);
-
-            const formattedRunTime =
-                formatTime(runTime);
-
-            const formattedAfterRun =
-                formatTime(afterRun);
-
-            const formattedVideoTime =
-                formatTime(videoTime);
-
-
-            /* ------------------------------------------------------
-               ВЫВОД РЕЗУЛЬТАТОВ
-               ------------------------------------------------------ */
-
-            beforeRunOutput.textContent =
-                formattedBeforeRun;
-
-            runTimeOutput.textContent =
-                formattedRunTime;
-
-            afterRunOutput.textContent =
-                formattedAfterRun;
-
-            videoTimeOutput.textContent =
-                formattedVideoTime;
-
-
-            /* ------------------------------------------------------
-               MOD NOTE
-               ------------------------------------------------------ */
-
-            updateModNote(
-                runStartInput.value.trim(),
-                runEndInput.value.trim(),
-                videoFps,
-                formattedRunTime
-            );
-        }
-
-
-        /* ==========================================================
-           АВТОМАТИЧЕСКИЙ РАСЧЁТ
-           ========================================================== */
-
-        const inputs = [
-            videoStartInput,
-            runStartInput,
-            runEndInput,
-            videoEndInput,
-            videoFpsInput
-        ];
-
-
-        inputs.forEach(input => {
-
-            input.addEventListener(
-                "input",
-                calculate
-            );
-
-            input.addEventListener(
-                "change",
-                calculate
-            );
-
-        });
-
-
-        /* ==========================================================
-           КОПИРОВАНИЕ MOD NOTE
-           ========================================================== */
-
-        copyButton.addEventListener(
-            "click",
-            async () => {
-
-                try {
-
-                    await navigator.clipboard.writeText(
-                        modNoteOutput.value
-                    );
-
-                    copyButton.textContent =
-                        "Скопировано!";
-
-                    setTimeout(() => {
-
-                        copyButton.textContent =
-                            "Копировать";
-
-                    }, 1200);
-
-                } catch (error) {
-
-                    modNoteOutput.select();
-
-                    document.execCommand("copy");
-
-                    copyButton.textContent =
-                        "Скопировано!";
-
-                    setTimeout(() => {
-
-                        copyButton.textContent =
-                            "Копировать";
-
-                    }, 1200);
-                }
-            }
-        );
-
-
-        /* ==========================================================
-           СБРОС
-           ========================================================== */
-
-        resetButton.addEventListener(
-            "click",
-            () => {
-
-                videoStartInput.value =
-                    "0:00:00.000";
-
-                runStartInput.value =
-                    "0:00:00.000";
-
-                runEndInput.value =
-                    "0:00:00.000";
-
-                videoEndInput.value =
-                    "0:00:00.000";
-
-                videoFpsInput.value =
-                    "60";
-
-
-                calculate();
-            }
-        );
-
-
-        /* ==========================================================
-           ПЕРВОНАЧАЛЬНЫЙ РАСЧЁТ
-           ========================================================== */
-
-        calculate();
-
-    </script>
+    <script src="script.js"></script>
 
 </body>
 </html>
+```
