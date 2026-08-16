@@ -38,7 +38,7 @@
 
         .calculator {
             width: 100%;
-            max-width: 900px;
+            max-width: 1150px;
 
             padding: 30px;
 
@@ -76,13 +76,16 @@
 
 
         /* ==========================================================
-           ДВЕ КОЛОНКИ
+           ТРИ КОЛОНКИ
            ========================================================== */
 
         .columns {
             display: grid;
 
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns:
+                1fr
+                1fr
+                1.35fr;
 
             gap: 16px;
         }
@@ -93,6 +96,8 @@
            ========================================================== */
 
         .column {
+            min-width: 0;
+
             padding: 20px;
 
             background: #1e1e1e;
@@ -112,7 +117,7 @@
 
 
         /* ==========================================================
-           ПОЛЯ ВВОДА
+           ПОЛЯ
            ========================================================== */
 
         .field {
@@ -217,6 +222,145 @@
 
 
         /* ==========================================================
+           FRAME RATE
+           ========================================================== */
+
+        .fps-field {
+            margin-bottom: 18px;
+        }
+
+        .fps-field label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            font-size: 12px;
+            color: #777;
+        }
+
+        .fps-field input {
+            width: 100%;
+
+            padding: 11px 12px;
+
+            border: 1px solid #333;
+            border-radius: 7px;
+
+            outline: none;
+
+            background: #111;
+            color: #fff;
+
+            font-family: monospace;
+            font-size: 15px;
+
+            transition:
+                border-color 0.15s ease,
+                background 0.15s ease;
+        }
+
+        .fps-field input:focus {
+            border-color: #555;
+            background: #141414;
+        }
+
+
+        /* ==========================================================
+           MOD NOTE
+           ========================================================== */
+
+        .mod-note {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mod-note-label {
+            margin-bottom: 7px;
+
+            font-size: 12px;
+            color: #777;
+        }
+
+        .mod-note textarea {
+            width: 100%;
+            min-height: 150px;
+
+            padding: 12px;
+
+            resize: vertical;
+
+            border: 1px solid #333;
+            border-radius: 7px;
+
+            outline: none;
+
+            background: #111;
+            color: #ddd;
+
+            font-family: monospace;
+            font-size: 13px;
+            line-height: 1.5;
+
+            transition:
+                border-color 0.15s ease,
+                background 0.15s ease;
+        }
+
+        .mod-note textarea:focus {
+            border-color: #555;
+            background: #141414;
+        }
+
+
+        /* ==========================================================
+           КНОПКА КОПИРОВАНИЯ
+           ========================================================== */
+
+        .copy-button {
+            width: 100%;
+
+            margin-top: 10px;
+
+            padding: 11px 16px;
+
+            border: 1px solid #333;
+            border-radius: 7px;
+
+            background: #252525;
+            color: #ccc;
+
+            font-size: 13px;
+
+            cursor: pointer;
+
+            transition:
+                background 0.15s ease,
+                border-color 0.15s ease;
+        }
+
+        .copy-button:hover {
+            background: #2d2d2d;
+            border-color: #444;
+        }
+
+        .copy-button:active {
+            background: #202020;
+        }
+
+
+        /* ==========================================================
+           НИЖНЯЯ ЧАСТЬ
+           ========================================================== */
+
+        .bottom {
+            display: flex;
+            flex-direction: column;
+
+            margin-top: 18px;
+        }
+
+
+        /* ==========================================================
            ОШИБКА
            ========================================================== */
 
@@ -233,14 +377,10 @@
 
 
         /* ==========================================================
-           КНОПКА
+           КНОПКА СБРОСА
            ========================================================== */
 
-        .actions {
-            margin-top: 18px;
-        }
-
-        button {
+        .reset-button {
             width: 100%;
 
             padding: 11px 16px;
@@ -260,12 +400,12 @@
                 border-color 0.15s ease;
         }
 
-        button:hover {
+        .reset-button:hover {
             background: #292929;
             border-color: #3b3b3b;
         }
 
-        button:active {
+        .reset-button:active {
             background: #1d1d1d;
         }
 
@@ -289,7 +429,19 @@
            АДАПТИВНОСТЬ
            ========================================================== */
 
-        @media (max-width: 700px) {
+        @media (max-width: 900px) {
+
+            .columns {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .column:last-child {
+                grid-column: 1 / -1;
+            }
+        }
+
+
+        @media (max-width: 650px) {
 
             body {
                 padding: 15px;
@@ -301,6 +453,10 @@
 
             .columns {
                 grid-template-columns: 1fr;
+            }
+
+            .column:last-child {
+                grid-column: auto;
             }
         }
     </style>
@@ -326,14 +482,14 @@
 
 
         <!-- ======================================================
-             КОЛОНКИ
+             ТРИ КОЛОНКИ
              ====================================================== -->
 
         <div class="columns">
 
 
             <!-- ==================================================
-                 ЛЕВАЯ КОЛОНКА
+                 КОЛОНКА 1 — ИСХОДНЫЕ ДАННЫЕ
                  ================================================== -->
 
             <section class="column">
@@ -414,7 +570,7 @@
 
 
             <!-- ==================================================
-                 ПРАВАЯ КОЛОНКА
+                 КОЛОНКА 2 — РЕЗУЛЬТАТ
                  ================================================== -->
 
             <section class="column">
@@ -489,34 +645,85 @@
 
             </section>
 
+
+            <!-- ==================================================
+                 КОЛОНКА 3 — MOD NOTE
+                 ================================================== -->
+
+            <section class="column">
+
+                <div class="column-title">
+                    Mod Note
+                </div>
+
+
+                <div class="fps-field">
+
+                    <label for="videoFps">
+                        Frame Rate
+                    </label>
+
+                    <input
+                        id="videoFps"
+                        type="number"
+                        value="60"
+                        min="1"
+                        step="0.001"
+                        placeholder="60"
+                    >
+
+                </div>
+
+
+                <div class="mod-note">
+
+                    <div class="mod-note-label">
+                        Готовая заметка
+                    </div>
+
+                    <textarea
+                        id="modNote"
+                        readonly
+                    >Mod Note: Start Time: 0:00:21.937, End Time: 0:05:03.033, Frame Rate: 60, Time: 0:04:41.096</textarea>
+
+                    <button
+                        class="copy-button"
+                        id="copyButton"
+                    >
+                        Копировать
+                    </button>
+
+                </div>
+
+            </section>
+
         </div>
 
 
         <!-- ======================================================
-             ОШИБКА
+             НИЖНЯЯ ЧАСТЬ
              ====================================================== -->
 
-        <div
-            class="error"
-            id="error"
-        ></div>
+        <div class="bottom">
+
+            <div
+                class="error"
+                id="error"
+            ></div>
 
 
-        <!-- ======================================================
-             КНОПКА
-             ====================================================== -->
-
-        <div class="actions">
-
-            <button id="resetButton">
+            <button
+                class="reset-button"
+                id="resetButton"
+            >
                 Сбросить значения
             </button>
 
-        </div>
 
+            <div class="hint">
+                Формат времени: ч:мм:сс.мс
+            </div>
 
-        <div class="hint">
-            Формат времени: ч:мм:сс.мс
         </div>
 
     </main>
@@ -540,6 +747,9 @@
         const videoEndInput =
             document.getElementById("videoEnd");
 
+        const videoFpsInput =
+            document.getElementById("videoFps");
+
 
         const beforeRunOutput =
             document.getElementById("beforeRun");
@@ -554,11 +764,19 @@
             document.getElementById("videoTime");
 
 
+        const modNoteOutput =
+            document.getElementById("modNote");
+
+
         const errorOutput =
             document.getElementById("error");
 
+
         const resetButton =
             document.getElementById("resetButton");
+
+        const copyButton =
+            document.getElementById("copyButton");
 
 
         /* ==========================================================
@@ -651,6 +869,22 @@
 
 
         /* ==========================================================
+           ОБНОВЛЕНИЕ MOD NOTE
+           ========================================================== */
+
+        function updateModNote(
+            startTime,
+            endTime,
+            videoFps,
+            videoTime
+        ) {
+
+            modNoteOutput.value =
+                `Mod Note: Start Time: ${startTime}, End Time: ${endTime}, Frame Rate: ${videoFps}, Time: ${videoTime}`;
+        }
+
+
+        /* ==========================================================
            РАСЧЁТ
            ========================================================== */
 
@@ -672,6 +906,14 @@
                 parseTime(videoEndInput.value);
 
 
+            const videoFps =
+                videoFpsInput.value.trim();
+
+
+            /* ------------------------------------------------------
+               ПРОВЕРКА ВРЕМЕНИ
+               ------------------------------------------------------ */
+
             if (
                 videoStart === null ||
                 runStart === null ||
@@ -685,6 +927,10 @@
                 return;
             }
 
+
+            /* ------------------------------------------------------
+               ПРОВЕРКА ПОРЯДКА
+               ------------------------------------------------------ */
 
             if (runStart < videoStart) {
 
@@ -714,6 +960,22 @@
 
 
             /* ------------------------------------------------------
+               ПРОВЕРКА FPS
+               ------------------------------------------------------ */
+
+            if (
+                videoFps === "" ||
+                Number(videoFps) <= 0
+            ) {
+
+                errorOutput.textContent =
+                    "Укажи корректный Frame Rate.";
+
+                return;
+            }
+
+
+            /* ------------------------------------------------------
                РАСЧЁТЫ
                ------------------------------------------------------ */
 
@@ -731,20 +993,49 @@
 
 
             /* ------------------------------------------------------
-               РЕЗУЛЬТАТЫ
+               ФОРМАТИРОВАНИЕ
+               ------------------------------------------------------ */
+
+            const formattedBeforeRun =
+                formatTime(beforeRun);
+
+            const formattedRunTime =
+                formatTime(runTime);
+
+            const formattedAfterRun =
+                formatTime(afterRun);
+
+            const formattedVideoTime =
+                formatTime(videoTime);
+
+
+            /* ------------------------------------------------------
+               ВЫВОД РЕЗУЛЬТАТОВ
                ------------------------------------------------------ */
 
             beforeRunOutput.textContent =
-                formatTime(beforeRun);
+                formattedBeforeRun;
 
             runTimeOutput.textContent =
-                formatTime(runTime);
+                formattedRunTime;
 
             afterRunOutput.textContent =
-                formatTime(afterRun);
+                formattedAfterRun;
 
             videoTimeOutput.textContent =
-                formatTime(videoTime);
+                formattedVideoTime;
+
+
+            /* ------------------------------------------------------
+               MOD NOTE
+               ------------------------------------------------------ */
+
+            updateModNote(
+                runStartInput.value.trim(),
+                runEndInput.value.trim(),
+                videoFps,
+                formattedRunTime
+            );
         }
 
 
@@ -756,7 +1047,8 @@
             videoStartInput,
             runStartInput,
             runEndInput,
-            videoEndInput
+            videoEndInput,
+            videoFpsInput
         ];
 
 
@@ -773,6 +1065,50 @@
             );
 
         });
+
+
+        /* ==========================================================
+           КОПИРОВАНИЕ MOD NOTE
+           ========================================================== */
+
+        copyButton.addEventListener(
+            "click",
+            async () => {
+
+                try {
+
+                    await navigator.clipboard.writeText(
+                        modNoteOutput.value
+                    );
+
+                    copyButton.textContent =
+                        "Скопировано!";
+
+                    setTimeout(() => {
+
+                        copyButton.textContent =
+                            "Копировать";
+
+                    }, 1200);
+
+                } catch (error) {
+
+                    modNoteOutput.select();
+
+                    document.execCommand("copy");
+
+                    copyButton.textContent =
+                        "Скопировано!";
+
+                    setTimeout(() => {
+
+                        copyButton.textContent =
+                            "Копировать";
+
+                    }, 1200);
+                }
+            }
+        );
 
 
         /* ==========================================================
@@ -795,6 +1131,9 @@
                 videoEndInput.value =
                     "0:00:00.000";
 
+                videoFpsInput.value =
+                    "60";
+
 
                 calculate();
             }
@@ -802,7 +1141,7 @@
 
 
         /* ==========================================================
-           ЗАПУСК
+           ПЕРВОНАЧАЛЬНЫЙ РАСЧЁТ
            ========================================================== */
 
         calculate();
