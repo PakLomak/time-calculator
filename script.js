@@ -290,6 +290,35 @@ function normalizeTimeInput(input) {
 /* ==========================================================
    ОБНОВЛЕНИЕ MOD NOTE
    ========================================================== */
+function formatModNoteTime(milliseconds) {
+
+    const totalSeconds =
+        milliseconds / 1000;
+
+    const minutes =
+        Math.floor(totalSeconds / 60);
+
+    const seconds =
+        totalSeconds % 60;
+
+
+    if (minutes === 0) {
+
+        return seconds.toFixed(3);
+
+    }
+
+
+    return (
+        minutes +
+        ":" +
+        String(Math.floor(seconds)).padStart(2, "0") +
+        "." +
+        String(
+            Math.round((seconds % 1) * 1000)
+        ).padStart(3, "0")
+    );
+}
 
 function updateModNote(
     startTime,
@@ -297,10 +326,6 @@ function updateModNote(
     videoFps,
     videoTime
 ) {
-
-    startTime = startTime.replace(/^0:/, "");
-    endTime = endTime.replace(/^0:/, "");
-    videoTime = videoTime.replace(/^0:/, "");
 
     modNoteOutput.value =
         `Mod Note: Start Time: ${startTime}, End Time: ${endTime}, Frame Rate: ${videoFps}, Time: ${videoTime}`;
