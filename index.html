@@ -7,10 +7,6 @@
     <title>Run Time Calculator</title>
 
     <style>
-        /* ==========================================================
-           ОСНОВА
-           ========================================================== */
-
         * {
             box-sizing: border-box;
         }
@@ -18,144 +14,81 @@
         body {
             margin: 0;
             min-height: 100vh;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
             padding: 30px;
-
             font-family: Arial, sans-serif;
-
             background: #111;
             color: #eee;
         }
 
-
-        /* ==========================================================
-           КАЛЬКУЛЯТОР
-           ========================================================== */
-
-        .calculator {
+        .layout {
             width: 100%;
-            max-width: 1150px;
+            max-width: 1280px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 330px;
+            gap: 18px;
+            align-items: start;
+        }
 
+        .calculator,
+        .history-panel {
             padding: 30px;
-
             background: #181818;
             border: 1px solid #292929;
             border-radius: 16px;
-
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
         }
 
-
-        /* ==========================================================
-           ЗАГОЛОВОК
-           ========================================================== */
-
         .header {
-            margin-bottom: 28px;
+            margin-bottom: 24px;
         }
 
         .header h1 {
             margin: 0 0 7px;
-
             font-size: 25px;
             font-weight: 600;
-
             color: #fff;
         }
 
         .header p {
             margin: 0;
-
             font-size: 14px;
             color: #777;
         }
 
-
-        /* ==========================================================
-           ТРИ КОЛОНКИ
-           ========================================================== */
-
-        .columns {
-            display: grid;
-
-            grid-template-columns:
-                1fr
-                1fr
-                1.35fr;
-
-            gap: 16px;
-        }
-
-
-        /* ==========================================================
-           КОЛОНКА
-           ========================================================== */
-
-        .column {
-            min-width: 0;
-
+        .input-panel,
+        .result-panel,
+        .note-panel {
             padding: 20px;
-
             background: #1e1e1e;
-
             border: 1px solid #292929;
             border-radius: 12px;
         }
 
-        .column-title {
-            margin-bottom: 18px;
-
-            font-size: 14px;
-            font-weight: 600;
-
-            color: #aaa;
-        }
-
-
-        /* ==========================================================
-           ПОЛЯ
-           ========================================================== */
-
-        .field {
-            margin-bottom: 12px;
-        }
-
-        .field:last-child {
-            margin-bottom: 0;
+        .input-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr 130px;
+            gap: 12px;
         }
 
         .field label {
             display: block;
-
             margin-bottom: 7px;
-
             font-size: 12px;
             color: #777;
         }
 
         .field input {
             width: 100%;
-
-            padding: 11px 12px;
-
+            padding: 12px;
             border: 1px solid #333;
             border-radius: 7px;
-
             outline: none;
-
             background: #111;
             color: #fff;
-
             font-family: monospace;
             font-size: 15px;
-
-            transition:
-                border-color 0.15s ease,
-                background 0.15s ease;
+            transition: border-color 0.15s ease, background 0.15s ease;
         }
 
         .field input:focus {
@@ -163,300 +96,208 @@
             background: #141414;
         }
 
-
-        /* ==========================================================
-           РЕЗУЛЬТАТЫ
-           ========================================================== */
-
-        .result {
-            padding: 14px;
-
-            margin-bottom: 12px;
-
-            background: #151515;
-
-            border: 1px solid #292929;
-            border-radius: 8px;
-        }
-
-        .result:last-child {
-            margin-bottom: 0;
+        .result-panel {
+            margin-top: 16px;
+            text-align: center;
         }
 
         .result-label {
             margin-bottom: 7px;
-
             font-size: 12px;
             color: #777;
         }
 
         .result-value {
             font-family: monospace;
-
-            font-size: 21px;
+            font-size: 32px;
             font-weight: 600;
-
-            color: #ddd;
-        }
-
-
-        /* ==========================================================
-           ГЛАВНЫЙ РЕЗУЛЬТАТ
-           ========================================================== */
-
-        .result.main {
-            padding: 17px;
-
-            background: #222;
-            border-color: #3a3a3a;
-        }
-
-        .result.main .result-label {
-            color: #999;
-        }
-
-        .result.main .result-value {
-            font-size: 29px;
             color: #fff;
         }
 
-
-        /* ==========================================================
-           FRAME RATE
-           ========================================================== */
-
-        .fps-field {
-            margin-bottom: 18px;
+        .note-panel {
+            margin-top: 16px;
         }
 
-        .fps-field label {
-            display: block;
-
-            margin-bottom: 7px;
-
+        .note-label {
+            margin-bottom: 8px;
             font-size: 12px;
             color: #777;
         }
 
-        .fps-field input {
-            width: 100%;
-
-            padding: 11px 12px;
-
-            border: 1px solid #333;
-            border-radius: 7px;
-
-            outline: none;
-
-            background: #111;
-            color: #fff;
-
-            font-family: monospace;
-            font-size: 15px;
-
-            transition:
-                border-color 0.15s ease,
-                background 0.15s ease;
-        }
-
-        .fps-field input:focus {
-            border-color: #555;
-            background: #141414;
-        }
-
-
-        /* ==========================================================
-           MOD NOTE
-           ========================================================== */
-
-        .mod-note {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .mod-note-label {
-            margin-bottom: 7px;
-
-            font-size: 12px;
-            color: #777;
-        }
-
-        .mod-note textarea {
-            width: 100%;
-            min-height: 150px;
-
+        .note {
             padding: 12px;
-
-            resize: vertical;
-
             border: 1px solid #333;
             border-radius: 7px;
-
-            outline: none;
-
             background: #111;
             color: #ddd;
-
             font-family: monospace;
             font-size: 13px;
             line-height: 1.5;
-
-            transition:
-                border-color 0.15s ease,
-                background 0.15s ease;
+            word-break: break-word;
         }
 
-        .mod-note textarea:focus {
-            border-color: #555;
-            background: #141414;
-        }
-
-
-        /* ==========================================================
-           КНОПКА КОПИРОВАНИЯ
-           ========================================================== */
-
-        .copy-button {
+        .copy-button,
+        .reset-button,
+        .clear-history-button {
             width: 100%;
-
             margin-top: 10px;
-
             padding: 11px 16px;
-
             border: 1px solid #333;
             border-radius: 7px;
-
             background: #252525;
             color: #ccc;
-
             font-size: 13px;
-
             cursor: pointer;
-
-            transition:
-                background 0.15s ease,
-                border-color 0.15s ease;
+            transition: background 0.15s ease, border-color 0.15s ease;
         }
 
-        .copy-button:hover {
+        .copy-button:hover,
+        .reset-button:hover,
+        .clear-history-button:hover {
             background: #2d2d2d;
             border-color: #444;
         }
 
-        .copy-button:active {
-            background: #202020;
-        }
-
-
-        /* ==========================================================
-           НИЖНЯЯ ЧАСТЬ
-           ========================================================== */
-
-        .bottom {
-            display: flex;
-            flex-direction: column;
-
-            margin-top: 18px;
-        }
-
-
-        /* ==========================================================
-           ОШИБКА
-           ========================================================== */
-
         .error {
             min-height: 18px;
-
-            margin-top: 16px;
-
+            margin-top: 12px;
             font-size: 13px;
             color: #999;
-
             text-align: center;
         }
-
-
-        /* ==========================================================
-           КНОПКА СБРОСА
-           ========================================================== */
-
-        .reset-button {
-            width: 100%;
-
-            padding: 11px 16px;
-
-            border: 1px solid #303030;
-            border-radius: 8px;
-
-            background: #222;
-            color: #bbb;
-
-            font-size: 13px;
-
-            cursor: pointer;
-
-            transition:
-                background 0.15s ease,
-                border-color 0.15s ease;
-        }
-
-        .reset-button:hover {
-            background: #292929;
-            border-color: #3b3b3b;
-        }
-
-        .reset-button:active {
-            background: #1d1d1d;
-        }
-
-
-        /* ==========================================================
-           ПОДСКАЗКА
-           ========================================================== */
 
         .hint {
-            margin-top: 18px;
-
+            margin-top: 16px;
             font-size: 11px;
-
             color: #555;
-
             text-align: center;
         }
 
-
-        /* ==========================================================
-           АДАПТИВНОСТЬ
-           ========================================================== */
-
-        @media (max-width: 900px) {
-
-            .columns {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .column:last-child {
-                grid-column: 1 / -1;
-            }
+        .history-panel {
+            min-width: 0;
         }
 
+        .history-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
 
-        @media (max-width: 650px) {
+        .history-header h2 {
+            margin: 0 0 5px;
+            font-size: 17px;
+            font-weight: 600;
+            color: #fff;
+        }
 
+        .history-header p {
+            margin: 0;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .clear-history-button {
+            width: auto;
+            margin: 0;
+            padding: 7px 10px;
+            flex-shrink: 0;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .history-empty {
+            padding: 30px 10px;
+            border: 1px dashed #303030;
+            border-radius: 8px;
+            color: #555;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .history-item {
+            position: relative;
+            padding: 12px;
+            border: 1px solid #2c2c2c;
+            border-radius: 8px;
+            background: #1e1e1e;
+            cursor: pointer;
+            transition: background 0.15s ease, border-color 0.15s ease;
+        }
+
+        .history-item:hover {
+            background: #242424;
+            border-color: #3a3a3a;
+        }
+
+        .history-number {
+            margin-bottom: 5px;
+            font-size: 10px;
+            color: #555;
+        }
+
+        .history-time {
+            margin-bottom: 7px;
+            font-family: monospace;
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .history-details {
+            font-family: monospace;
+            font-size: 11px;
+            line-height: 1.5;
+            color: #777;
+        }
+
+        .history-delete {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 22px;
+            height: 22px;
+            padding: 0;
+            border: 0;
+            border-radius: 5px;
+            background: transparent;
+            color: #555;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .history-delete:hover {
+            background: #2b2b2b;
+            color: #aaa;
+        }
+
+        @media (max-width: 900px) {
             body {
                 padding: 15px;
             }
 
-            .calculator {
-                padding: 20px;
-            }
-
-            .columns {
+            .layout {
                 grid-template-columns: 1fr;
             }
 
-            .column:last-child {
-                grid-column: auto;
+            .history-panel {
+                order: 2;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .calculator,
+            .history-panel {
+                padding: 20px;
+            }
+
+            .input-panel {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -464,255 +305,98 @@
 
 <body>
 
-    <main class="calculator">
+    <main class="layout">
+
+        <section class="calculator">
 
         <div class="header">
             <h1>Run Time Calculator</h1>
-
-            <p>
-                Расчёт времени забега по временным меткам видео
-            </p>
+            <p>Расчёт времени забега по временным меткам видео</p>
         </div>
 
-
-        <div class="columns">
-
-            <!-- ==================================================
-                 ИСХОДНЫЕ ДАННЫЕ
-                 ================================================== -->
-
-            <section class="column">
-
-                <div class="column-title">
-                    Исходные данные
-                </div>
-
-
-                <div class="field">
-
-                    <label for="videoStart">
-                        Начало видео
-                    </label>
-
-                    <input
-                        id="videoStart"
-                        type="text"
-                        value="0:00:00.000"
-                        placeholder="Например: 7.5"
-                        autocomplete="off"
-                    >
-
-                </div>
-
-
-                <div class="field">
-
-                    <label for="runStart">
-                        Начало забега
-                    </label>
-
-                    <input
-                        id="runStart"
-                        type="text"
-                        value="0:00:21.937"
-                        placeholder="Например: 0:7:3.25"
-                        autocomplete="off"
-                    >
-
-                </div>
-
-
-                <div class="field">
-
-                    <label for="runEnd">
-                        Конец забега
-                    </label>
-
-                    <input
-                        id="runEnd"
-                        type="text"
-                        value="0:05:03.033"
-                        placeholder="Например: 5:3.033"
-                        autocomplete="off"
-                    >
-
-                </div>
-
-
-                <div class="field">
-
-                    <label for="videoEnd">
-                        Конец видео
-                    </label>
-
-                    <input
-                        id="videoEnd"
-                        type="text"
-                        value="0:10:25.834"
-                        placeholder="Например: 10:25.834"
-                        autocomplete="off"
-                    >
-
-                </div>
-
-            </section>
-
-
-            <!-- ==================================================
-                 РЕЗУЛЬТАТ
-                 ================================================== -->
-
-            <section class="column">
-
-                <div class="column-title">
-                    Результат
-                </div>
-
-
-                <div class="result">
-
-                    <div class="result-label">
-                        До начала забега
-                    </div>
-
-                    <div
-                        class="result-value"
-                        id="beforeRun"
-                    >
-                        0:00:21.937
-                    </div>
-
-                </div>
-
-
-                <div class="result main">
-
-                    <div class="result-label">
-                        Время забега
-                    </div>
-
-                    <div
-                        class="result-value"
-                        id="runTime"
-                    >
-                        0:04:41.096
-                    </div>
-
-                </div>
-
-
-                <div class="result">
-
-                    <div class="result-label">
-                        После забега
-                    </div>
-
-                    <div
-                        class="result-value"
-                        id="afterRun"
-                    >
-                        0:05:22.801
-                    </div>
-
-                </div>
-
-
-                <div class="result">
-
-                    <div class="result-label">
-                        Полная продолжительность видео
-                    </div>
-
-                    <div
-                        class="result-value"
-                        id="videoTime"
-                    >
-                        0:10:25.834
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            <!-- ==================================================
-                 MOD NOTE
-                 ================================================== -->
-
-            <section class="column">
-
-                <div class="column-title">
-                    Mod Note
-                </div>
-
-
-                <div class="fps-field">
-
-                    <label for="videoFps">
-                        Frame Rate
-                    </label>
-
-                    <input
-                        id="videoFps"
-                        type="number"
-                        value="60"
-                        min="0.001"
-                        step="0.001"
-                        placeholder="60"
-                    >
-
-                </div>
-
-
-                <div class="mod-note">
-
-                    <div class="mod-note-label">
-                        Готовая заметка
-                    </div>
-
-                    <textarea
-    id="modNote"
-    readonly
->Mod Note: Start Time: 21.937, End Time: 5:03.033, Frame Rate: 60, Time: 4:41.096</textarea>
-
-                    <button
-                        class="copy-button"
-                        id="copyButton"
-                    >
-                        Копировать
-                    </button>
-
-                </div>
-
-            </section>
-
-        </div>
-
-
-        <div class="bottom">
-
-            <div
-                class="error"
-                id="error"
-            ></div>
-
-
-            <button
-                class="reset-button"
-                id="resetButton"
-            >
-                Сбросить значения
-            </button>
-
-
-            <div class="hint">
-    Можно вводить: 7 · 7.5 · 0:7 · 0:7:3.25 · 7m 3s 250ms · 0ч 7мин 3с 250мс
+        <section class="input-panel">
+
+            <div class="field">
+                <label for="runStart">Начало забега</label>
+                <input
+                    id="runStart"
+                    type="text"
+                    value="0:00:21.937"
+                    placeholder="21.937"
+                    autocomplete="off"
+                >
             </div>
 
+            <div class="field">
+                <label for="runEnd">Конец забега</label>
+                <input
+                    id="runEnd"
+                    type="text"
+                    value="0:05:03.033"
+                    placeholder="5:03.033"
+                    autocomplete="off"
+                >
+            </div>
+
+            <div class="field">
+                <label for="videoFps">FPS</label>
+                <input
+                    id="videoFps"
+                    type="number"
+                    value="60"
+                    min="0.001"
+                    step="0.001"
+                    placeholder="60"
+                >
+            </div>
+
+        </section>
+
+        <section class="result-panel">
+            <div class="result-label">Время забега</div>
+            <div class="result-value" id="runTime">0:04:41.096</div>
+        </section>
+
+        <section class="note-panel">
+            <div class="note-label">Mod Note</div>
+            <div class="note" id="modNote">
+                Mod Note: Start Time: 21.937, End Time: 5:03.033, Frame Rate: 60, Time: 4:41.096
+            </div>
+
+            <button class="copy-button" id="copyButton">
+                Копировать Mod Note
+            </button>
+
+            <button class="reset-button" id="resetButton">
+                Сбросить
+            </button>
+        </section>
+
+        <div class="error" id="error"></div>
+
+        <div class="hint">
+            Можно вводить: 7 · 7.5 · 0:7 · 0:7:3.25 · 7m 3s 250ms · 0ч 7мин 3с 250мс
         </div>
 
-    </main>
+        </section>
 
+        <aside class="history-panel">
+            <div class="history-header">
+                <div>
+                    <h2>Предыдущие результаты</h2>
+                    <p>Последние 10 расчётов</p>
+                </div>
+                <button class="clear-history-button" id="clearHistoryButton">
+                    Очистить
+                </button>
+            </div>
+
+            <div class="history-list" id="historyList">
+                <div class="history-empty">Здесь появятся результаты</div>
+            </div>
+        </aside>
+
+    </main>
 
     <script src="script.js"></script>
 
